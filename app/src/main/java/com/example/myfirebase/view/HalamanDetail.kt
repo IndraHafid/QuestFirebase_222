@@ -22,6 +22,9 @@ fun DetailSiswaScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
+    LaunchedEffect(key1 = idSiswa) {
+        viewModel.loadDetail(idSiswa)
+    }
 
     Scaffold(
         modifier = modifier,
