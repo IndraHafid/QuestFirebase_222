@@ -1,5 +1,6 @@
 package com.example.myfirebase.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -9,7 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfirebase.R
 import com.example.myfirebase.view.route.DestinasiHome
@@ -83,4 +86,13 @@ fun HomeBody(
             )
         }
     }
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(R.string.loading),
+        modifier = modifier.size(200.dp)
+    )
 }
