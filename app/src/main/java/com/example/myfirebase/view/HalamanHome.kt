@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
@@ -14,6 +15,7 @@ import com.example.myfirebase.R
 import com.example.myfirebase.view.route.DestinasiHome
 import com.example.myfirebase.viewmodel.HomeViewModel
 import com.example.myfirebase.viewmodel.PenyediaViewModel
+import com.example.myfirebase.viewmodel.StatusUiSiswa
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,5 +57,30 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         )
+    }
+}
+
+@Composable
+fun HomeBody(
+    statusUiSiswa: StatusUiSiswa,
+    onSiswaClick: (Int) -> Unit,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        when (statusUiSiswa) {
+            is StatusUiSiswa.Loading -> LoadingScreen()
+            is StatusUiSiswa.Success -> DaftarSiswa(
+                itemSiswa = statusUiSiswa.siswa,
+                onSiswaClick = { onSiswaClick(it.id.toInt()) }
+            )
+            is StatusUiSiswa.Error -> ErrorScreen(
+                retryAction = retryAction,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
