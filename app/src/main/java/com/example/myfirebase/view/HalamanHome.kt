@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -29,7 +30,8 @@ import com.example.myfirebase.viewmodel.StatusUiSiswa
 @Composable
 fun HomeScreen(
     navigateToItemEntry: () -> Unit,
-    navigateToItemUpdate: (Int) -> Unit,
+    navigateToItemEdit: (Long) -> Unit,
+    navigateToItemDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
@@ -59,7 +61,8 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeBody(
             statusUiSiswa = viewModel.statusUiSiswa,
-            onSiswaClick = navigateToItemUpdate,
+            onSiswaEdit = { id -> navigateToItemEdit(id) },
+            onSiswaDetail = { id -> navigateToItemDetail(id) },
             retryAction = viewModel::loadSiswa,
             modifier = modifier
                 .padding(innerPadding)
@@ -71,7 +74,8 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     statusUiSiswa: StatusUiSiswa,
-    onSiswaClick: (Int) -> Unit,
+    onSiswaEdit: (Long) -> Unit,
+    onSiswaDetail: (Long) -> Unit,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,7 +87,8 @@ fun HomeBody(
             is StatusUiSiswa.Loading -> LoadingScreen()
             is StatusUiSiswa.Success -> DaftarSiswa(
                 itemSiswa = statusUiSiswa.siswa,
-                onSiswaClick = { onSiswaClick(it.id.toInt()) }
+                onEditClick = { onSiswaEdit(it.id) },
+                onDetailClick = { onSiswaDetail(it.id) }
             )
             is StatusUiSiswa.Error -> ErrorScreen(
                 retryAction = retryAction,
@@ -125,7 +130,8 @@ fun ErrorScreen(
 @Composable
 fun DaftarSiswa(
     itemSiswa: List<Siswa>,
-    onSiswaClick: (Siswa) -> Unit,
+    onEditClick: (Siswa) -> Unit,
+    onDetailClick: (Siswa) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -133,8 +139,9 @@ fun DaftarSiswa(
             ItemSiswa(
                 siswa = person,
                 modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.padding_small))
-                    .clickable { onSiswaClick(person) }
+                    .padding(dimensionResource(id = R.dimen.padding_small)),
+                onEditClick = { onEditClick(person) },
+                onDetailClick = { onDetailClick(person) }
             )
         }
     }
@@ -143,10 +150,12 @@ fun DaftarSiswa(
 @Composable
 fun ItemSiswa(
     siswa: Siswa,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEditClick: () -> Unit = {},
+    onDetailClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.clickable { onDetailClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -169,6 +178,9 @@ fun ItemSiswa(
                     text = siswa.telpon,
                     style = MaterialTheme.typography.titleMedium
                 )
+                IconButton(onClick = onEditClick) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.edit_siswa))
+                }
             }
             Text(
                 text = siswa.alamat,
